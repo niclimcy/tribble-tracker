@@ -159,29 +159,21 @@ async fn create_stat(
     }
 
     if !DEVICE_ID_REGEX.is_match(&input.device_id) {
-        return Err(super::RouterError::BadRequest("device_id is not valid"));
+        return Ok("neat");
     }
 
     if input.name != "x86_64" && !input.version.ends_with(&input.name) {
-        return Err(super::RouterError::BadRequest(
-            "version string must end with -model",
-        ));
+        return Ok("neat");
     }
 
     if input.country.len() != 2 && input.country != "Unknown" {
-        return Err(super::RouterError::BadRequest(
-            "country must be a two letter iso code",
-        ));
+        return Ok("neat");
     }
 
-    let version = VERSION_REGEX
-        .find(&input.version)
-        .ok_or(super::RouterError::BadRequest(
-            "version must start with version code (ie, 22.1)",
-        ))?
-        .as_str()
-        .to_string();
-
+    let version = match VERSION_REGEX.find(&input.version) {
+        Some(x) => x.as_str().to_string(),
+        None => return Ok("neat"),
+    };
     let official = OFFICIAL_REGEX.is_match(&input.version);
 
     if input.country != "Unknown" {
