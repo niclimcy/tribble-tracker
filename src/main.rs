@@ -4,7 +4,8 @@
 
 use axum::Router;
 use std::net::SocketAddr;
-use std::sync::{Arc, RwLock};
+use std::sync::Arc;
+use tokio::sync::RwLock;
 use tower_http::services::{ServeDir, ServeFile};
 
 pub mod database;
