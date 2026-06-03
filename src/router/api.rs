@@ -118,11 +118,17 @@ async fn filtered_stats_inner(
 
 #[derive(Deserialize)]
 struct StatInput {
+    #[serde(rename = "device_hash")]
     device_id: String,
+    #[serde(rename = "device_name")]
     name: String,
+    #[serde(rename = "device_version")]
     version: String,
+    #[serde(rename = "device_country")]
     country: String,
+    #[serde(rename = "device_carrier")]
     carrier: Option<String>,
+    #[serde(rename = "device_carrier_id")]
     carrier_id: Option<String>,
 }
 
