@@ -2,6 +2,7 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
+import AdminPage from '@/pages/AdminPage.vue'
 import Error404Page from '@/pages/Error404Page.vue'
 import FilterPage from '@/pages/FilterPage.vue'
 import OverviewPage from '@/pages/OverviewPage.vue'
@@ -23,6 +24,11 @@ const router = createRouter({
       beforeEnter: (to) => {
         if (!filtersFromRoute(to).length) return { name: 'overview' }
       }
+    },
+    {
+      path: '/admin',
+      name: 'admin',
+      component: AdminPage
     },
     {
       path: '/:pathMatch(.*)*',
