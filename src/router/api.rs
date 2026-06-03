@@ -135,7 +135,7 @@ struct StatInput {
 static VERSION_REGEX: LazyLock<Regex> = LazyLock::new(|| Regex::new(r"^\d+\.\d+").unwrap());
 static OFFICIAL_REGEX: LazyLock<Regex> =
     LazyLock::new(|| Regex::new(r"\d\d\.\d-\d{8}-NIGHTLY-.*").unwrap());
-static DEVICE_ID_REGEX: LazyLock<Regex> = LazyLock::new(|| Regex::new(r"^[0-9a-f]{64}$").unwrap());
+static DEVICE_ID_REGEX: LazyLock<Regex> = LazyLock::new(|| Regex::new(r"^[0-9A-F]{64}$").unwrap());
 
 async fn create_stat(
     state: State<AppState>,
