@@ -8,14 +8,10 @@ use crate::database::VersionRawTotalItem;
 use crate::router::api::FilterQuery;
 use axum::{
     Json, Router,
-    extract::{ConnectInfo, Query, Request, State},
-    http::StatusCode,
-    middleware::{self, Next},
-    response::Response,
+    extract::{Query, State},
     routing::{get, post},
 };
 use serde::Deserialize;
-use std::net::SocketAddr;
 
 pub fn internal_router() -> Router<AppState> {
     Router::new()
@@ -23,19 +19,6 @@ pub fn internal_router() -> Router<AppState> {
         .route("/ban/model", post(ban_model))
         .route("/ban/version", post(ban_version))
         .route("/installations", get(installations))
-        .layer(middleware::from_fn(require_loopback))
-}
-
-async fn require_loopback(
-    addr: ConnectInfo<SocketAddr>,
-    req: Request,
-    next: Next,
-) -> Result<Response, StatusCode> {
-    if addr.ip().is_loopback() {
-        Ok(next.run(req).await)
-    } else {
-        Err(StatusCode::FORBIDDEN)
-    }
 }
 
 async fn list_bans(
