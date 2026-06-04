@@ -4,7 +4,7 @@
 
 use crate::AppState;
 use crate::database::BannedItem;
-use crate::database::VersionRawTotalItem;
+use crate::database::TotalInstallationsItem;
 use crate::router::api::FilterQuery;
 use axum::{
     Json, Router,
@@ -97,8 +97,8 @@ async fn unban_version(
 async fn installations(
     State(state): State<AppState>,
     Query(query): Query<FilterQuery>,
-) -> Result<Json<Vec<VersionRawTotalItem>>, super::RouterError> {
+) -> Result<Json<Vec<TotalInstallationsItem>>, super::RouterError> {
     let filters = query.to_filters();
-    let items = state.db.fetch_version_raw_total(&filters).await?;
+    let items = state.db.fetch_total_installations(&filters).await?;
     Ok(Json(items))
 }

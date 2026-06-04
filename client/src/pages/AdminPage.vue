@@ -14,7 +14,7 @@ import {
   unbanVersion,
   type BannedItem,
   type InstallationFilters,
-  type VersionRawTotalItem
+  type TotalInstallationsItem
 } from '@/api/admin'
 import Button from '@/components/ui/Button.vue'
 import SnackBar from '@/components/ui/SnackBar.vue'
@@ -112,7 +112,7 @@ const filters = ref<Required<InstallationFilters>>({
   version: '',
   carrier: ''
 })
-const installations = ref<VersionRawTotalItem[] | null>(null)
+const installations = ref<TotalInstallationsItem[] | null>(null)
 const installationsBusy = ref(false)
 const installationsError = ref<string | null>(null)
 
@@ -250,18 +250,28 @@ onMounted(loadBans)
         <p class="text-xs text-on-surface-muted">{{ sortedInstallations.length }} rows</p>
         <p v-if="!sortedInstallations.length" class="text-sm text-on-surface-muted">No results.</p>
         <div v-else class="-mx-1 overflow-y-auto pr-1" style="max-height: 480px">
-          <ol class="space-y-0.5">
-            <li
-              v-for="row in sortedInstallations"
-              :key="row.version_raw"
-              class="flex items-baseline justify-between gap-4 px-2 py-1 font-mono text-sm"
-            >
-              <span class="text-on-surface">{{ row.version_raw }}</span>
-              <span class="tabular-nums text-on-surface-muted">{{
-                formatNumber(row.installations)
-              }}</span>
-            </li>
-          </ol>
+          <table class="w-full text-left text-sm">
+            <thead class="text-xs text-on-surface-muted">
+              <tr>
+                <th class="px-2 py-1 font-medium">Model</th>
+                <th class="px-2 py-1 font-medium">Version</th>
+                <th class="px-2 py-1 font-medium">Installations</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr
+                v-for="row in sortedInstallations"
+                :key="row.version_raw"
+                class="border-t border-outline-variant"
+              >
+                <td class="px-2 py-1.5 text-on-surface">{{ row.model }}</td>
+                <td class="px-2 py-1.5 text-on-surface">{{ row.version_raw }}</td>
+                <td class="px-2 py-1.5 tabular-nums text-on-surface-muted">
+                  {{ formatNumber(row.installations) }}
+                </td>
+              </tr>
+            </tbody>
+          </table>
         </div>
       </template>
     </section>

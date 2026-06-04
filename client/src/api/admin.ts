@@ -8,7 +8,8 @@ export interface BannedItem {
   note: string | null
 }
 
-export interface VersionRawTotalItem {
+export interface TotalInstallationsItem {
+  model: string
   version_raw: string
   installations: number
 }
@@ -53,7 +54,7 @@ export function unbanVersion(version: string): Promise<string> {
   return request('/internal/ban/version', 'DELETE', { version })
 }
 
-export function getInstallations(filters: InstallationFilters): Promise<VersionRawTotalItem[]> {
+export function getInstallations(filters: InstallationFilters): Promise<TotalInstallationsItem[]> {
   const query = new URLSearchParams()
   for (const [key, value] of Object.entries(filters)) {
     if (value) query.set(key, value)
@@ -61,5 +62,5 @@ export function getInstallations(filters: InstallationFilters): Promise<VersionR
 
   const suffix = query.toString()
   const url = suffix ? `/internal/installations?${suffix}` : '/internal/installations'
-  return request<VersionRawTotalItem[]>(url)
+  return request<TotalInstallationsItem[]>(url)
 }

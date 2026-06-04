@@ -54,7 +54,8 @@ pub struct BannedItem {
 }
 
 #[derive(Serialize, sqlx::FromRow)]
-pub struct VersionRawTotalItem {
+pub struct TotalInstallationsItem {
+    pub model: String,
     pub version_raw: String,
     pub installations: i64,
 }
@@ -179,12 +180,13 @@ impl Database {
         Ok(total)
     }
 
-    pub async fn fetch_version_raw_total(
+    pub async fn fetch_total_installations(
         &self,
         filters: &[FilterClause<'_>],
-    ) -> Result<Vec<VersionRawTotalItem>, DbError> {
-        let mut qb =
-            sqlx::QueryBuilder::new("SELECT version_raw, COUNT(*) AS installations FROM stats");
+    ) -> Result<Vec<TotalInstallationsItem>, DbError> {
+        let mut qb = sqlx::QueryBuilder::new(
+            "SELECT model, version_raw, COUNT(*) AS installations FROM stats",
+        );
 
         if !filters.is_empty() {
             qb.push(" WHERE ");
@@ -200,7 +202,7 @@ impl Database {
         qb.push(" GROUP BY version_raw ORDER BY installations DESC");
 
         let items = qb
-            .build_query_as::<VersionRawTotalItem>()
+            .build_query_as::<TotalInstallationsItem>()
             .fetch_all(&self.pool)
             .await?;
         Ok(items)
