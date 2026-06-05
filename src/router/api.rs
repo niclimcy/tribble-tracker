@@ -6,7 +6,7 @@ use crate::AppState;
 use crate::database::{FilterClause, GroupCol, NewStat};
 use axum::{
     Json, Router,
-    extract::{Query, State},
+    extract::{Query, State, rejection::JsonRejection},
     routing::get,
 };
 use axum_extra::{TypedHeader, headers::UserAgent};
@@ -140,8 +140,13 @@ static DEVICE_ID_REGEX: LazyLock<Regex> = LazyLock::new(|| Regex::new(r"^[0-9A-F
 async fn create_stat(
     state: State<AppState>,
     user_agent: Option<TypedHeader<UserAgent>>,
-    mut input: Json<StatInput>,
+    input: Result<Json<StatInput>, JsonRejection>,
 ) -> Result<&'static str, super::RouterError> {
+    let mut input = match input {
+        Ok(Json(x)) => x,
+        Err(_) => return Ok("neat"),
+    };
+
     let is_dalvik = user_agent
         .as_ref()
         .map(|x| x.as_str().starts_with("Dalvik/"))
