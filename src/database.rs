@@ -145,6 +145,23 @@ impl Database {
         Ok(())
     }
 
+    fn append_filters(
+        &self,
+        qb: &mut sqlx::QueryBuilder<sqlx::Sqlite>,
+        filters: &[FilterClause<'_>],
+    ) {
+        if !filters.is_empty() {
+            qb.push(" WHERE ");
+            let mut separated = qb.separated(" AND ");
+            for filter in filters {
+                separated
+                    .push(filter.column)
+                    .push_unseparated(" = ")
+                    .push_bind_unseparated(filter.value);
+            }
+        }
+    }
+
     pub async fn fetch_grouped_counts(
         &self,
         group: GroupCol,
@@ -152,14 +169,11 @@ impl Database {
     ) -> Result<Vec<GroupedCount>, DbError> {
         let col = group.as_str();
         let mut qb = sqlx::QueryBuilder::new(format!(
-            "SELECT {col} as name, COUNT(*) as count FROM stats WHERE {col} IS NOT NULL AND {col} != ''"
+            "SELECT {col} as name, COUNT(*) as count FROM stats"
         ));
-        for filter in filters {
-            qb.push(" AND ")
-                .push(filter.column)
-                .push(" = ")
-                .push_bind(filter.value);
-        }
+
+        self.append_filters(&mut qb, filters);
+
         qb.push(format!(" GROUP BY {col} ORDER BY count DESC LIMIT 250"));
         let rows = qb
             .build_query_as::<GroupedCount>()
@@ -171,16 +185,7 @@ impl Database {
     pub async fn fetch_total(&self, filters: &[FilterClause<'_>]) -> Result<i64, DbError> {
         let mut qb = sqlx::QueryBuilder::new("SELECT COUNT(*) FROM stats");
 
-        if !filters.is_empty() {
-            qb.push(" WHERE ");
-            let mut separated = qb.separated(" AND ");
-            for filter in filters {
-                separated
-                    .push(filter.column)
-                    .push_unseparated(" = ")
-                    .push_bind_unseparated(filter.value);
-            }
-        }
+        self.append_filters(&mut qb, filters);
 
         let total = qb.build_query_scalar::<i64>().fetch_one(&self.pool).await?;
         Ok(total)
@@ -194,16 +199,7 @@ impl Database {
             "SELECT model, version_raw, COUNT(*) AS installations FROM stats",
         );
 
-        if !filters.is_empty() {
-            qb.push(" WHERE ");
-            let mut separated = qb.separated(" AND ");
-            for filter in filters {
-                separated
-                    .push(filter.column)
-                    .push_unseparated(" = ")
-                    .push_bind_unseparated(filter.value);
-            }
-        }
+        self.append_filters(&mut qb, filters);
 
         qb.push(" GROUP BY version_raw ORDER BY installations DESC");
 
