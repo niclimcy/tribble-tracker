@@ -39,7 +39,7 @@ cargo run
 
 This serves the API on [http://localhost:8080](http://localhost:8080).
 
-To work on the frontend, run the Vite dev server alongside it and access the app at [http://localhost:5173](http://localhost:5173) — `/api` requests are proxied to the backend. See [client/README.md](client/README.md) for details.
+To work on the frontend, run the Vite dev server alongside it and access the app at [http://localhost:5173](http://localhost:5173) — `/api` and `/internal` requests are proxied to the backend. See [client/README.md](client/README.md) for details.
 
 ## Docker
 
