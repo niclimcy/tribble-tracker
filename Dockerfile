@@ -30,6 +30,5 @@ FROM alpine:3.23
 RUN apk add --no-cache curl jq sqlite
 WORKDIR /app
 COPY --from=builder /app/target/release/tribble-tracker /app/tribble-tracker
-COPY migrations /app/migrations
 COPY --from=client /client/dist /app/client
 ENTRYPOINT ["/app/tribble-tracker"]
