@@ -122,7 +122,7 @@ impl Database {
             r#"
             INSERT INTO stats (device_id, carrier, carrier_id, country, model, official, version, version_raw)
             VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-            ON CONFLICT(device_id) DO UPDATE SET
+            ON CONFLICT (device_id) DO UPDATE SET
                 carrier = excluded.carrier,
                 carrier_id = excluded.carrier_id,
                 country = excluded.country,
@@ -244,7 +244,7 @@ impl Database {
         });
 
         qb.push(format!(
-            " ON CONFLICT({col}) DO UPDATE SET note = excluded.note"
+            " ON CONFLICT ({col}) DO UPDATE SET note = excluded.note"
         ));
 
         qb.build().execute(&self.pool).await?;
