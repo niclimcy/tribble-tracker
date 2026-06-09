@@ -217,62 +217,35 @@ impl Database {
         Ok(items)
     }
 
-    fn append_in_values(&self, qb: &mut sqlx::QueryBuilder<sqlx::Sqlite>, values: &[String]) {
+    pub async fn remove_bans(&self, col: &str, values: &[String]) -> Result<(), DbError> {
+        let mut qb = sqlx::QueryBuilder::new(format!("DELETE FROM banned WHERE {col}"));
+
         let mut separated = qb.separated(", ");
         separated.push_unseparated(" IN (");
         for value in values {
             separated.push_bind(value);
         }
         separated.push_unseparated(")");
-    }
-
-    pub async fn remove_banned_models(&self, models: &[String]) -> Result<(), DbError> {
-        let mut qb = sqlx::QueryBuilder::new("DELETE FROM banned WHERE model");
-
-        self.append_in_values(&mut qb, &models);
 
         qb.build().execute(&self.pool).await?;
         Ok(())
     }
 
-    pub async fn upsert_banned_models(
+    pub async fn upsert_bans(
         &self,
-        models: &[String],
+        col: &str,
+        values: &[String],
         note: Option<&str>,
     ) -> Result<(), DbError> {
-        let mut qb = sqlx::QueryBuilder::new("INSERT INTO banned (model, note)");
+        let mut qb = sqlx::QueryBuilder::new(format!("INSERT INTO banned ({col}, note)"));
 
-        qb.push_values(models, |mut b, model| {
-            b.push_bind(model).push_bind(note);
+        qb.push_values(values, |mut b, value| {
+            b.push_bind(value).push_bind(note);
         });
 
-        qb.push(" ON CONFLICT(model) DO UPDATE SET note = excluded.note");
-
-        qb.build().execute(&self.pool).await?;
-        Ok(())
-    }
-
-    pub async fn remove_banned_versions(&self, versions: &[String]) -> Result<(), DbError> {
-        let mut qb = sqlx::QueryBuilder::new("DELETE FROM banned WHERE version");
-
-        self.append_in_values(&mut qb, &versions);
-
-        qb.build().execute(&self.pool).await?;
-        Ok(())
-    }
-
-    pub async fn upsert_banned_versions(
-        &self,
-        versions: &[String],
-        note: Option<&str>,
-    ) -> Result<(), DbError> {
-        let mut qb = sqlx::QueryBuilder::new("INSERT INTO banned (version, note)");
-
-        qb.push_values(versions, |mut b, version| {
-            b.push_bind(version).push_bind(note);
-        });
-
-        qb.push(" ON CONFLICT(version) DO UPDATE SET note = excluded.note");
+        qb.push(format!(
+            " ON CONFLICT({col}) DO UPDATE SET note = excluded.note"
+        ));
 
         qb.build().execute(&self.pool).await?;
         Ok(())

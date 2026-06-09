@@ -61,7 +61,7 @@ async fn ban_models(
 ) -> Result<&'static str, super::RouterError> {
     state
         .db
-        .upsert_banned_models(&input.models, input.note.as_deref())
+        .upsert_bans("model", &input.models, input.note.as_deref())
         .await?;
     Ok("OK")
 }
@@ -70,7 +70,7 @@ async fn unban_model(
     state: State<AppState>,
     input: Json<BanModelInput>,
 ) -> Result<&'static str, super::RouterError> {
-    state.db.remove_banned_models(&input.models).await?;
+    state.db.remove_bans("model", &input.models).await?;
     Ok("OK")
 }
 
@@ -88,7 +88,7 @@ async fn ban_versions(
 ) -> Result<&'static str, super::RouterError> {
     state
         .db
-        .upsert_banned_versions(&input.versions, input.note.as_deref())
+        .upsert_bans("version", &input.versions, input.note.as_deref())
         .await?;
     Ok("OK")
 }
@@ -97,7 +97,7 @@ async fn unban_version(
     state: State<AppState>,
     input: Json<BanVersionInput>,
 ) -> Result<&'static str, super::RouterError> {
-    state.db.remove_banned_versions(&input.versions).await?;
+    state.db.remove_bans("version", &input.versions).await?;
     Ok("OK")
 }
 
