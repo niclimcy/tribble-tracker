@@ -30,27 +30,27 @@ const target = computed(() =>
 <template>
   <RouterLink
     :to="target"
-    class="group relative flex items-center gap-3 overflow-hidden rounded-xl px-3 py-2.5 transition-colors hover:bg-surface-hover focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary"
+    class="group hover:bg-surface-hover focus-visible:ring-brand-primary relative flex items-center gap-3 overflow-hidden rounded-xl px-3 py-2.5 transition-colors focus:outline-none focus-visible:ring-2"
   >
     <span
-      class="absolute inset-y-1 left-1 rounded-lg bg-bar-track transition-[width] duration-500 ease-out group-hover:bg-bar-track/80"
+      class="bg-bar-track group-hover:bg-bar-track/80 absolute inset-y-1 left-1 rounded-lg transition-[width] duration-500 ease-out"
       :style="{ width: `calc(${percent}% - 0.5rem)` }"
       aria-hidden="true"
     />
     <span
-      class="relative w-6 shrink-0 text-right text-xs font-medium tabular-nums text-on-surface-muted"
+      class="text-on-surface-muted relative w-6 shrink-0 text-right text-xs font-medium tabular-nums"
     >
       {{ rank }}
     </span>
     <span class="relative flex min-w-0 flex-1 items-baseline gap-2">
-      <span class="truncate text-sm font-medium text-on-surface">
+      <span class="text-on-surface truncate text-sm font-medium">
         {{ formatFilterValue(props.column, props.name) }}
       </span>
-      <span v-if="props.column === 'country'" class="shrink-0 text-xs text-on-surface-muted">
+      <span v-if="props.column === 'country'" class="text-on-surface-muted shrink-0 text-xs">
         {{ props.name.toUpperCase() }}
       </span>
     </span>
-    <span class="relative shrink-0 text-sm tabular-nums text-on-surface">
+    <span class="text-on-surface relative shrink-0 text-sm tabular-nums">
       {{ formatNumber(count) }}
     </span>
   </RouterLink>

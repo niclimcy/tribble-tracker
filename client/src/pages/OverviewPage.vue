@@ -17,12 +17,12 @@ const { data, loading, error } = useStats()
 </script>
 
 <template>
-  <div class="mx-auto flex w-full container max-w-6xl flex-col gap-6">
+  <div class="container mx-auto flex w-full max-w-6xl flex-col gap-6">
     <HeroTotal :value="data?.total ?? 0" />
 
     <p
       v-if="error"
-      class="rounded-2xl bg-surface-elevated p-6 text-center text-sm text-on-surface-muted"
+      class="bg-surface-elevated text-on-surface-muted rounded-2xl p-6 text-center text-sm"
     >
       Couldn&rsquo;t load statistics. {{ error.message }}
     </p>

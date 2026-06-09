@@ -48,7 +48,7 @@ const visibleCards = computed(() => {
 </script>
 
 <template>
-  <div class="mx-auto flex w-full container max-w-6xl flex-col gap-6">
+  <div class="container mx-auto flex w-full max-w-6xl flex-col gap-6">
     <header class="flex flex-col gap-3 px-1">
       <div v-if="filters.length" class="flex flex-wrap gap-2">
         <FilterChip
@@ -60,21 +60,21 @@ const visibleCards = computed(() => {
         />
       </div>
       <div class="flex items-baseline gap-3">
-        <span class="text-4xl font-medium tabular-nums text-on-surface sm:text-5xl">
+        <span class="text-on-surface text-4xl font-medium tabular-nums sm:text-5xl">
           <LoaderCircle
             v-if="loading"
-            class="inline h-[0.85em] w-[0.85em] animate-spin align-[-0.1em] text-brand-primary"
+            class="text-brand-primary inline h-[0.85em] w-[0.85em] animate-spin align-[-0.1em]"
             aria-label="Loading"
           />
           <template v-else>{{ formatNumber(data?.total ?? 0) }}</template>
         </span>
-        <span class="text-sm text-on-surface-muted">matching installs</span>
+        <span class="text-on-surface-muted text-sm">matching installs</span>
       </div>
     </header>
 
     <p
       v-if="error"
-      class="rounded-2xl bg-surface-elevated p-6 text-center text-sm text-on-surface-muted"
+      class="bg-surface-elevated text-on-surface-muted rounded-2xl p-6 text-center text-sm"
     >
       Couldn&rsquo;t load statistics. {{ error.message }}
     </p>

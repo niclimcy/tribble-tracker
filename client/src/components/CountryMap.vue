@@ -80,8 +80,8 @@ const pointTooltip = (d: TopoJSONMapPoint<Point>) => {
   <section class="flex flex-col gap-3">
     <header class="flex flex-wrap items-baseline justify-between gap-2 px-2">
       <div>
-        <h2 class="text-lg font-medium text-on-surface">Where installs come from</h2>
-        <p class="text-xs text-on-surface-muted">
+        <h2 class="text-on-surface text-lg font-medium">Where installs come from</h2>
+        <p class="text-on-surface-muted text-xs">
           {{ formatNumber(points.length) }} countries · {{ formatNumber(total) }} total installs
         </p>
       </div>
@@ -89,7 +89,7 @@ const pointTooltip = (d: TopoJSONMapPoint<Point>) => {
     <VisSingleContainer
       :data="{ points }"
       :height="520"
-      class="vis-country-map relative w-full overflow-hidden rounded-3xl bg-surface-elevated"
+      class="vis-country-map bg-surface-elevated relative w-full overflow-hidden rounded-3xl"
       @wheel.prevent
     >
       <VisTopoJSONMap

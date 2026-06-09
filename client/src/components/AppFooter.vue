@@ -10,10 +10,10 @@ import navbarLogo from '@/assets/navbar-logo.svg'
 
 <template>
   <footer
-    class="border-t bg-surface-elevated border-outline-variant px-4 py-8 text-sm text-on-surface-muted sm:px-8"
+    class="bg-surface-elevated border-outline-variant text-on-surface-muted border-t px-4 py-8 text-sm sm:px-8"
   >
     <div
-      class="mx-auto flex container max-w-6xl flex-col items-center gap-4 text-center md:flex-row md:items-center md:justify-between md:text-left"
+      class="container mx-auto flex max-w-6xl flex-col items-center gap-4 text-center md:flex-row md:items-center md:justify-between md:text-left"
     >
       <div class="flex flex-col items-center gap-3 md:items-start">
         <img :src="navbarLogo" alt="LineageOS" class="h-5 w-auto opacity-70" />

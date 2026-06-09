@@ -21,9 +21,9 @@ const props = defineProps<{
   <RouterLink
     :to="props.clearTo"
     :aria-label="`Clear ${formatColumnLabel(props.column)} filter: ${formatFilterValue(props.column, props.name)}`"
-    class="inline-flex h-8 items-center gap-2 rounded-lg bg-brand-light pr-2 pl-4 text-sm leading-5 font-medium text-brand-dark transition focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary hover:brightness-95 active:brightness-90 dark:bg-brand-dark dark:text-brand-light dark:hover:brightness-110 dark:active:brightness-125"
+    class="bg-brand-light text-brand-dark focus-visible:ring-brand-primary dark:bg-brand-dark dark:text-brand-light inline-flex h-8 items-center gap-2 rounded-lg pr-2 pl-4 text-sm leading-5 font-medium transition hover:brightness-95 focus:outline-none focus-visible:ring-2 active:brightness-90 dark:hover:brightness-110 dark:active:brightness-125"
   >
-    <span class="font-normal text-brand-dark/70 uppercase dark:text-brand-light/70">{{
+    <span class="text-brand-dark/70 dark:text-brand-light/70 font-normal uppercase">{{
       formatColumnLabel(props.column)
     }}</span>
     <span>{{ formatFilterValue(props.column, props.name) }}</span>

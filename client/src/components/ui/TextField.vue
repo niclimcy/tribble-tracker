@@ -30,17 +30,17 @@ const id = useId()
         v-model="model"
         :type="type ?? 'text'"
         placeholder=" "
-        class="peer w-full rounded-t-lg border-b-2 border-outline bg-surface px-3 pt-5 pb-1.5 text-sm text-on-surface outline-none transition-colors hover:bg-surface-hover focus:border-brand-primary"
+        class="peer border-outline bg-surface text-on-surface hover:bg-surface-hover focus:border-brand-primary w-full rounded-t-lg border-b-2 px-3 pt-5 pb-1.5 text-sm transition-colors outline-none"
         @keyup.enter="$emit('submit')"
       />
       <label
         :for="id"
-        class="pointer-events-none absolute left-3 top-1.5 origin-left text-xs text-on-surface-muted transition-all duration-200 ease-out peer-placeholder-shown:top-1/2 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:text-sm peer-focus:top-1.5 peer-focus:translate-y-0 peer-focus:text-xs peer-focus:text-brand-primary"
+        class="text-on-surface-muted peer-focus:text-brand-primary pointer-events-none absolute top-1.5 left-3 origin-left text-xs transition-all duration-200 ease-out peer-placeholder-shown:top-1/2 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:text-sm peer-focus:top-1.5 peer-focus:translate-y-0 peer-focus:text-xs"
       >
         {{ label }}
       </label>
     </div>
-    <p v-if="supportingText" class="mt-1 px-4 text-xs text-on-surface-muted">
+    <p v-if="supportingText" class="text-on-surface-muted mt-1 px-4 text-xs">
       {{ supportingText }}
     </p>
   </div>

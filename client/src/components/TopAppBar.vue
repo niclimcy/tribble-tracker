@@ -10,15 +10,15 @@ import { ExternalLink } from '@lucide/vue'
 </script>
 
 <template>
-  <header class="sticky top-0 z-20 border-b border-outline-variant bg-surface px-4 sm:px-8">
-    <div class="mx-auto flex h-16 container max-w-6xl items-center gap-3">
+  <header class="border-outline-variant bg-surface sticky top-0 z-20 border-b px-4 sm:px-8">
+    <div class="container mx-auto flex h-16 max-w-6xl items-center gap-3">
       <RouterLink
         to="/"
-        class="flex items-center gap-3 rounded-full px-2 py-1 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary"
+        class="focus-visible:ring-brand-primary flex items-center gap-3 rounded-full px-2 py-1 focus:outline-none focus-visible:ring-2"
         aria-label="LineageOS Statistics — home"
       >
         <img :src="navbarLogo" alt="" class="h-6 w-auto" aria-hidden="true" />
-        <span class="text-base font-medium text-on-surface">LineageOS Statistics</span>
+        <span class="text-on-surface text-base font-medium">LineageOS Statistics</span>
       </RouterLink>
 
       <div class="ml-auto flex items-center gap-1">
@@ -26,7 +26,7 @@ import { ExternalLink } from '@lucide/vue'
           href="https://lineageos.org"
           target="_blank"
           rel="noopener"
-          class="hidden items-center gap-1.5 rounded-full px-4 py-2 text-xs font-medium text-on-surface-muted uppercase focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary md:inline-flex"
+          class="text-on-surface-muted focus-visible:ring-brand-primary hidden items-center gap-1.5 rounded-full px-4 py-2 text-xs font-medium uppercase focus:outline-none focus-visible:ring-2 md:inline-flex"
         >
           lineageos.org
           <ExternalLink class="size-4" aria-hidden="true" />

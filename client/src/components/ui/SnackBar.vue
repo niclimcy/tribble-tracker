@@ -21,7 +21,7 @@ defineProps<{
       v-if="message"
       role="status"
       aria-live="polite"
-      class="fixed inset-x-0 bottom-6 z-50 mx-auto flex w-fit max-w-[90vw] items-center rounded-lg bg-on-surface px-4 py-3 text-sm text-surface shadow-lg"
+      class="bg-on-surface text-surface fixed inset-x-0 bottom-6 z-50 mx-auto flex w-fit max-w-[90vw] items-center rounded-lg px-4 py-3 text-sm shadow-lg"
     >
       {{ message }}
     </div>

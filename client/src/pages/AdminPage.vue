@@ -141,14 +141,14 @@ onMounted(loadBans)
 </script>
 
 <template>
-  <div class="mx-auto flex w-full container max-w-6xl flex-col gap-6">
+  <div class="container mx-auto flex w-full max-w-6xl flex-col gap-6">
     <header class="px-1">
-      <h1 class="text-2xl font-bold text-on-surface sm:text-3xl">Admin</h1>
+      <h1 class="text-on-surface text-2xl font-bold sm:text-3xl">Admin</h1>
     </header>
 
     <div class="grid gap-6 lg:grid-cols-2">
-      <section class="flex flex-col gap-4 rounded-3xl bg-surface-elevated p-5">
-        <h2 class="text-lg font-medium text-on-surface">Ban model</h2>
+      <section class="bg-surface-elevated flex flex-col gap-4 rounded-3xl p-5">
+        <h2 class="text-on-surface text-lg font-medium">Ban model</h2>
         <TextField v-model="modelInput" label="Model" @submit="submitBanModel" />
         <TextField v-model="modelNote" label="Note (optional)" @submit="submitBanModel" />
         <Button
@@ -162,8 +162,8 @@ onMounted(loadBans)
         </Button>
       </section>
 
-      <section class="flex flex-col gap-4 rounded-3xl bg-surface-elevated p-5">
-        <h2 class="text-lg font-medium text-on-surface">Ban version</h2>
+      <section class="bg-surface-elevated flex flex-col gap-4 rounded-3xl p-5">
+        <h2 class="text-on-surface text-lg font-medium">Ban version</h2>
         <TextField v-model="versionInput" label="Version" @submit="submitBanVersion" />
         <TextField v-model="versionNote" label="Note (optional)" @submit="submitBanVersion" />
         <Button
@@ -178,12 +178,12 @@ onMounted(loadBans)
       </section>
     </div>
 
-    <section class="flex flex-col gap-4 rounded-3xl bg-surface-elevated p-5">
+    <section class="bg-surface-elevated flex flex-col gap-4 rounded-3xl p-5">
       <header class="flex items-baseline justify-between gap-2">
-        <h2 class="text-lg font-medium text-on-surface">Banned items</h2>
+        <h2 class="text-on-surface text-lg font-medium">Banned items</h2>
         <button
           type="button"
-          class="inline-flex items-center gap-1.5 rounded-full border border-outline-variant px-3 py-1.5 text-xs text-on-surface transition hover:border-brand-primary disabled:opacity-50"
+          class="border-outline-variant text-on-surface hover:border-brand-primary inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs transition disabled:opacity-50"
           :disabled="bansLoading"
           @click="loadBans"
         >
@@ -193,11 +193,11 @@ onMounted(loadBans)
       </header>
 
       <p v-if="bansError" class="text-sm text-red-400">{{ bansError }}</p>
-      <p v-else-if="bansLoading && !bans.length" class="text-sm text-on-surface-muted">Loading…</p>
-      <p v-else-if="!bans.length" class="text-sm text-on-surface-muted">No banned items.</p>
+      <p v-else-if="bansLoading && !bans.length" class="text-on-surface-muted text-sm">Loading…</p>
+      <p v-else-if="!bans.length" class="text-on-surface-muted text-sm">No banned items.</p>
       <div v-else class="overflow-x-auto">
         <table class="w-full text-left text-sm">
-          <thead class="text-xs text-on-surface-muted">
+          <thead class="text-on-surface-muted text-xs">
             <tr>
               <th class="px-2 py-1 font-medium">Model</th>
               <th class="px-2 py-1 font-medium">Version</th>
@@ -206,14 +206,14 @@ onMounted(loadBans)
             </tr>
           </thead>
           <tbody>
-            <tr v-for="(item, i) in bans" :key="i" class="border-t border-outline-variant">
-              <td class="px-2 py-1.5 text-on-surface">{{ item.model ?? '—' }}</td>
-              <td class="px-2 py-1.5 text-on-surface">{{ item.version ?? '—' }}</td>
-              <td class="px-2 py-1.5 text-on-surface-muted">{{ item.note ?? '—' }}</td>
-              <td class="px-2 py-1.5 text-on-surface">
+            <tr v-for="(item, i) in bans" :key="i" class="border-outline-variant border-t">
+              <td class="text-on-surface px-2 py-1.5">{{ item.model ?? '—' }}</td>
+              <td class="text-on-surface px-2 py-1.5">{{ item.version ?? '—' }}</td>
+              <td class="text-on-surface-muted px-2 py-1.5">{{ item.note ?? '—' }}</td>
+              <td class="text-on-surface px-2 py-1.5">
                 <button
                   type="button"
-                  class="inline-flex items-center gap-1.5 rounded-full border border-outline-variant px-3 py-1.5 text-xs text-on-surface transition hover:border-brand-primary disabled:opacity-50"
+                  class="border-outline-variant text-on-surface hover:border-brand-primary inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs transition disabled:opacity-50"
                   :disabled="bansLoading"
                   @click="deleteBan(item)"
                 >
@@ -228,8 +228,8 @@ onMounted(loadBans)
     </section>
 
     <!-- Installations -->
-    <section class="flex flex-col gap-4 rounded-3xl bg-surface-elevated p-5">
-      <h2 class="text-lg font-medium text-on-surface">Installations</h2>
+    <section class="bg-surface-elevated flex flex-col gap-4 rounded-3xl p-5">
+      <h2 class="text-on-surface text-lg font-medium">Installations</h2>
       <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <TextField
           v-for="key in FILTER_KEYS"
@@ -247,11 +247,11 @@ onMounted(loadBans)
 
       <p v-if="installationsError" class="text-sm text-red-400">{{ installationsError }}</p>
       <template v-else-if="installations">
-        <p class="text-xs text-on-surface-muted">{{ sortedInstallations.length }} rows</p>
-        <p v-if="!sortedInstallations.length" class="text-sm text-on-surface-muted">No results.</p>
+        <p class="text-on-surface-muted text-xs">{{ sortedInstallations.length }} rows</p>
+        <p v-if="!sortedInstallations.length" class="text-on-surface-muted text-sm">No results.</p>
         <div v-else class="-mx-1 overflow-y-auto pr-1" style="max-height: 480px">
           <table class="w-full text-left text-sm">
-            <thead class="text-xs text-on-surface-muted">
+            <thead class="text-on-surface-muted text-xs">
               <tr>
                 <th class="px-2 py-1 font-medium">Model</th>
                 <th class="px-2 py-1 font-medium">Version</th>
@@ -262,11 +262,11 @@ onMounted(loadBans)
               <tr
                 v-for="row in sortedInstallations"
                 :key="row.version_raw"
-                class="border-t border-outline-variant"
+                class="border-outline-variant border-t"
               >
-                <td class="px-2 py-1.5 text-on-surface">{{ row.model }}</td>
-                <td class="px-2 py-1.5 text-on-surface">{{ row.version_raw }}</td>
-                <td class="px-2 py-1.5 tabular-nums text-on-surface-muted">
+                <td class="text-on-surface px-2 py-1.5">{{ row.model }}</td>
+                <td class="text-on-surface px-2 py-1.5">{{ row.version_raw }}</td>
+                <td class="text-on-surface-muted px-2 py-1.5 tabular-nums">
                   {{ formatNumber(row.installations) }}
                 </td>
               </tr>

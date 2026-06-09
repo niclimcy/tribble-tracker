@@ -10,7 +10,7 @@ import TopAppBar from '@/components/TopAppBar.vue'
 </script>
 
 <template>
-  <div class="flex min-h-dvh flex-col bg-surface text-on-surface">
+  <div class="bg-surface text-on-surface flex min-h-dvh flex-col">
     <TopAppBar />
     <main class="flex flex-1 flex-col px-4 py-6 sm:px-8 sm:py-10">
       <RouterView />

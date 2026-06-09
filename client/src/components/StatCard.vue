@@ -40,10 +40,10 @@ const filtered = computed(() => {
 </script>
 
 <template>
-  <section class="flex h-full flex-col rounded-3xl bg-surface-elevated p-4 sm:p-5">
+  <section class="bg-surface-elevated flex h-full flex-col rounded-3xl p-4 sm:p-5">
     <header class="mb-3 flex items-baseline justify-between gap-2 px-2">
-      <h2 class="text-lg font-medium text-on-surface">{{ title }}</h2>
-      <span class="text-xs text-on-surface-muted">
+      <h2 class="text-on-surface text-lg font-medium">{{ title }}</h2>
+      <span class="text-on-surface-muted text-xs">
         {{ formatNumber(list.length) }}
       </span>
     </header>
@@ -51,14 +51,14 @@ const filtered = computed(() => {
     <label class="relative mb-3 block px-1">
       <span class="sr-only">Filter {{ title }}</span>
       <Search
-        class="pointer-events-none absolute top-1/2 left-4 size-4 -translate-y-1/2 text-on-surface-muted"
+        class="text-on-surface-muted pointer-events-none absolute top-1/2 left-4 size-4 -translate-y-1/2"
         aria-hidden="true"
       />
       <input
         v-model="query"
         type="search"
         :placeholder="`Search ${title.toLowerCase()}`"
-        class="w-full rounded-full border border-outline-variant bg-surface py-2 pr-3 pl-9 text-sm text-on-surface placeholder:text-on-surface-muted focus:border-brand-primary focus:outline-none"
+        class="border-outline-variant bg-surface text-on-surface placeholder:text-on-surface-muted focus:border-brand-primary w-full rounded-full border py-2 pr-3 pl-9 text-sm focus:outline-none"
       />
     </label>
 
@@ -68,10 +68,10 @@ const filtered = computed(() => {
           <StatBarRow :rank="i + 1" :column="column" :name="name" :count="count" :max="max" />
         </li>
       </ol>
-      <p v-else-if="query.length" class="px-3 py-8 text-center text-sm text-on-surface-muted">
+      <p v-else-if="query.length" class="text-on-surface-muted px-3 py-8 text-center text-sm">
         No matches for &ldquo;{{ query }}&rdquo;
       </p>
-      <p v-else-if="!list.length" class="px-3 py-8 text-center text-sm text-on-surface-muted">
+      <p v-else-if="!list.length" class="text-on-surface-muted px-3 py-8 text-center text-sm">
         No data available
       </p>
     </div>
