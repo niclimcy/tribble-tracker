@@ -198,7 +198,7 @@ async fn create_stat(
     let official = OFFICIAL_REGEX.is_match(&input.version);
 
     if input.country != "Unknown" {
-        input.country = input.country.to_uppercase();
+        input.country.make_ascii_uppercase();
     }
 
     state
