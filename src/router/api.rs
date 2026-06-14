@@ -47,12 +47,14 @@ impl FilterQuery {
         .flatten()
     }
 
+    #[must_use]
     pub fn to_filters(&self) -> Vec<FilterClause<'_>> {
         self.iter()
             .map(|(column, value)| FilterClause { column, value })
             .collect()
     }
 
+    #[must_use]
     pub fn to_map(&self) -> HashMap<&'static str, &str> {
         self.iter().collect()
     }
@@ -60,11 +62,11 @@ impl FilterQuery {
 
 #[derive(Serialize, Clone)]
 struct StatsResponse {
-    model: IndexMap<String, usize>,
-    country: IndexMap<String, usize>,
-    version: IndexMap<String, usize>,
-    carrier: IndexMap<String, usize>,
-    total: usize,
+    model: IndexMap<String, i64>,
+    country: IndexMap<String, i64>,
+    version: IndexMap<String, i64>,
+    carrier: IndexMap<String, i64>,
+    total: i64,
 }
 
 async fn filtered_stats(
@@ -113,13 +115,10 @@ async fn filtered_stats_inner(
         state.db.fetch_total(&filters),
     )?;
 
-    let resolve = |rows: Option<Vec<GroupedCount>>, col: &str| -> IndexMap<String, usize> {
+    let resolve = |rows: Option<Vec<GroupedCount>>, col: &str| -> IndexMap<String, i64> {
         match rows {
-            Some(rows) => rows
-                .into_iter()
-                .map(|row| (row.name, row.count as usize))
-                .collect(),
-            None => IndexMap::from([(pinned[col].to_string(), total as usize)]),
+            Some(rows) => rows.into_iter().map(|row| (row.name, row.count)).collect(),
+            None => IndexMap::from([(pinned[col].to_string(), total)]),
         }
     };
 
@@ -128,7 +127,7 @@ async fn filtered_stats_inner(
         country: resolve(countries, "country"),
         version: resolve(versions, "version"),
         carrier: resolve(carriers, "carrier"),
-        total: total as usize,
+        total,
     }))
 }
 
@@ -158,15 +157,13 @@ async fn create_stat(
     user_agent: Option<TypedHeader<UserAgent>>,
     input: Result<Json<StatInput>, JsonRejection>,
 ) -> Result<&'static str, super::RouterError> {
-    let mut input = match input {
-        Ok(Json(x)) => x,
-        Err(_) => return Ok("neat"),
+    let Ok(Json(mut input)) = input else {
+        return Ok("neat");
     };
 
     let is_dalvik = user_agent
         .as_ref()
-        .map(|x| x.as_str().starts_with("Dalvik/"))
-        .unwrap_or(false);
+        .is_some_and(|x| x.as_str().starts_with("Dalvik/"));
 
     if !is_dalvik {
         return Ok("neat");

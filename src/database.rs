@@ -80,6 +80,7 @@ pub enum GroupCol {
 }
 
 impl GroupCol {
+    #[must_use]
     pub fn as_str(self) -> &'static str {
         match self {
             Self::Model => "model",
@@ -102,6 +103,9 @@ pub struct FilterClause<'a> {
 }
 
 impl Database {
+    /// # Errors
+    ///
+    /// Returns a [`DbError`] if connecting to the database or running migrations fails.
     pub async fn new() -> Result<Self, DbError> {
         let database_url = env::var("DATABASE_URL").unwrap_or("sqlite:dev.db".to_string());
         let pool = SqlitePool::connect(&database_url).await?;
@@ -110,6 +114,9 @@ impl Database {
         Ok(Self { pool })
     }
 
+    /// # Errors
+    ///
+    /// Returns a [`DbError`] if the delete query fails.
     pub async fn delete_old_stats(&self) -> Result<u64, DbError> {
         let res = sqlx::query!("DELETE FROM stats WHERE submit_time < datetime('now', '-90 days')")
             .execute(&self.pool)
@@ -117,6 +124,9 @@ impl Database {
         Ok(res.rows_affected())
     }
 
+    /// # Errors
+    ///
+    /// Returns a [`DbError`] if the upsert query fails.
     pub async fn upsert_stat(&self, stat: NewStat<'_>) -> Result<(), DbError> {
         sqlx::query!(
             r#"
@@ -145,11 +155,7 @@ impl Database {
         Ok(())
     }
 
-    fn append_filters(
-        &self,
-        qb: &mut sqlx::QueryBuilder<sqlx::Sqlite>,
-        filters: &[FilterClause<'_>],
-    ) {
+    fn append_filters(qb: &mut sqlx::QueryBuilder<sqlx::Sqlite>, filters: &[FilterClause<'_>]) {
         if !filters.is_empty() {
             qb.push(" WHERE ");
             let mut separated = qb.separated(" AND ");
@@ -162,6 +168,9 @@ impl Database {
         }
     }
 
+    /// # Errors
+    ///
+    /// Returns a [`DbError`] if the query fails.
     pub async fn fetch_grouped_counts(
         &self,
         group: GroupCol,
@@ -172,7 +181,7 @@ impl Database {
             "SELECT {col} as name, COUNT(*) as count FROM stats"
         ));
 
-        self.append_filters(&mut qb, filters);
+        Self::append_filters(&mut qb, filters);
 
         qb.push(format!(" GROUP BY {col} ORDER BY count DESC LIMIT 250"));
         let rows = qb
@@ -182,15 +191,21 @@ impl Database {
         Ok(rows)
     }
 
+    /// # Errors
+    ///
+    /// Returns a [`DbError`] if the query fails.
     pub async fn fetch_total(&self, filters: &[FilterClause<'_>]) -> Result<i64, DbError> {
         let mut qb = sqlx::QueryBuilder::new("SELECT COUNT(*) FROM stats");
 
-        self.append_filters(&mut qb, filters);
+        Self::append_filters(&mut qb, filters);
 
         let total = qb.build_query_scalar::<i64>().fetch_one(&self.pool).await?;
         Ok(total)
     }
 
+    /// # Errors
+    ///
+    /// Returns a [`DbError`] if the query fails.
     pub async fn fetch_total_installations(
         &self,
         filters: &[FilterClause<'_>],
@@ -199,7 +214,7 @@ impl Database {
             "SELECT model, version_raw, COUNT(*) AS installations FROM stats",
         );
 
-        self.append_filters(&mut qb, filters);
+        Self::append_filters(&mut qb, filters);
 
         qb.push(" GROUP BY version_raw ORDER BY installations DESC");
 
@@ -210,6 +225,9 @@ impl Database {
         Ok(items)
     }
 
+    /// # Errors
+    ///
+    /// Returns a [`DbError`] if the query fails.
     pub async fn list_bans(&self) -> Result<Vec<BannedItem>, DbError> {
         let items = sqlx::query_as!(BannedItem, r#"SELECT version, model, note FROM banned"#)
             .fetch_all(&self.pool)
@@ -217,6 +235,9 @@ impl Database {
         Ok(items)
     }
 
+    /// # Errors
+    ///
+    /// Returns a [`DbError`] if the delete query fails.
     pub async fn remove_bans(&self, col: &str, values: &[String]) -> Result<(), DbError> {
         let mut qb = sqlx::QueryBuilder::new(format!("DELETE FROM banned WHERE {col}"));
 
@@ -231,6 +252,9 @@ impl Database {
         Ok(())
     }
 
+    /// # Errors
+    ///
+    /// Returns a [`DbError`] if the upsert query fails.
     pub async fn upsert_bans(
         &self,
         col: &str,

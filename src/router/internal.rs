@@ -40,7 +40,7 @@ where
         return Err(serde::de::Error::custom("vector cannot be empty"));
     }
 
-    if v.iter().any(|s| s.is_empty()) {
+    if v.iter().any(std::string::String::is_empty) {
         return Err(serde::de::Error::custom("vector contains empty string"));
     }
 

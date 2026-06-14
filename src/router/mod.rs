@@ -26,7 +26,7 @@ impl IntoResponse for RouterError {
     fn into_response(self) -> Response {
         match self {
             RouterError::Db(e) => {
-                eprintln!("database error: {:?}", e);
+                eprintln!("database error: {e:?}");
                 (StatusCode::INTERNAL_SERVER_ERROR, "sql error").into_response()
             }
         }

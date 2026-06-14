@@ -11,7 +11,7 @@ use crate::database::{Database, DbError};
 
 pub fn spawn_stats_cleanup(db: Database) {
     tokio::spawn(async move {
-        let mut ticker = tokio::time::interval(std::time::Duration::from_secs(24 * 60 * 60));
+        let mut ticker = tokio::time::interval(std::time::Duration::from_hours(24));
         loop {
             ticker.tick().await;
             match db.delete_old_stats().await {
@@ -30,6 +30,9 @@ pub struct Banned {
 
 pub type BannedCache = Arc<RwLock<Banned>>;
 
+/// # Errors
+///
+/// Returns a [`DbError`] if fetching the bans from the database fails.
 pub async fn refresh_banned(db: &Database, cache: &BannedCache) -> Result<(), DbError> {
     let rows = db.list_bans().await?;
     let mut next = Banned::default();
@@ -47,7 +50,7 @@ pub async fn refresh_banned(db: &Database, cache: &BannedCache) -> Result<(), Db
 
 pub fn spawn_banned_refresh(db: Database, banned: BannedCache) {
     tokio::spawn(async move {
-        let mut ticker = tokio::time::interval(std::time::Duration::from_secs(60));
+        let mut ticker = tokio::time::interval(std::time::Duration::from_mins(1));
         loop {
             ticker.tick().await;
             if let Err(e) = refresh_banned(&db, &banned).await {
