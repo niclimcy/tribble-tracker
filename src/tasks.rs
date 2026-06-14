@@ -32,7 +32,7 @@ pub type BannedCache = Arc<RwLock<Banned>>;
 
 /// # Errors
 ///
-/// Returns a [`DbError`] if fetching the bans from the database fails.
+/// Returns a [`DbError`] if fetching bans from the database fails.
 pub async fn refresh_banned(db: &Database, cache: &BannedCache) -> Result<(), DbError> {
     let rows = db.list_bans().await?;
     let mut next = Banned::default();
