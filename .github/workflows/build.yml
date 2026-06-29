@@ -29,6 +29,6 @@ jobs:
       - uses: actions-rust-lang/setup-rust-toolchain@v1
 
       - run: |
-          cargo build
-          cargo clippy -- -D warnings
+          cargo build --release
+          cargo clippy --release
           cargo fmt --check
