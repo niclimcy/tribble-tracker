@@ -30,4 +30,5 @@ jobs:
 
       - run: |
           cargo build --release
+          cargo clippy --release -- -D warnings
           cargo fmt --check
