@@ -17,6 +17,7 @@ import {
   type InstallationFilters,
   type TotalInstallationsItem
 } from '@/api/admin'
+import { FILTER_COLUMNS } from '@/api/types'
 import SnackBar from '@/components/ui/SnackBar.vue'
 import SubmitButton from '@/components/ui/SubmitButton.vue'
 import TextArea from '@/components/ui/TextArea.vue'
@@ -130,8 +131,6 @@ const filters = ref<Required<InstallationFilters>>({
 const installations = ref<TotalInstallationsItem[] | null>(null)
 const installationsBusy = ref(false)
 const installationsError = ref<string | null>(null)
-
-const FILTER_KEYS = ['model', 'country', 'version', 'carrier'] as const
 
 const sortedInstallations = computed(() =>
   installations.value
@@ -268,7 +267,7 @@ onMounted(loadBans)
       <h2 class="text-on-surface text-lg font-medium">Installations</h2>
       <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <TextField
-          v-for="key in FILTER_KEYS"
+          v-for="key in FILTER_COLUMNS"
           :key="key"
           v-model="filters[key]"
           :label="key[0].toUpperCase() + key.slice(1)"
