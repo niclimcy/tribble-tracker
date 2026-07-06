@@ -70,6 +70,7 @@ pub struct NewStat<'a> {
     pub official: bool,
     pub version: &'a str,
     pub version_raw: &'a str,
+    pub asn: i64,
 }
 
 #[derive(Clone, Copy, Hash, PartialEq, Eq)]
@@ -137,8 +138,8 @@ impl Database {
     pub async fn upsert_stat(&self, stat: NewStat<'_>) -> Result<(), DbError> {
         sqlx::query!(
             r#"
-            INSERT INTO stats (device_id, carrier, carrier_id, country, model, official, version, version_raw)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+            INSERT INTO stats (device_id, carrier, carrier_id, country, model, official, version, version_raw, asn)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
             ON CONFLICT (device_id) DO UPDATE SET
                 carrier = excluded.carrier,
                 carrier_id = excluded.carrier_id,
@@ -146,7 +147,8 @@ impl Database {
                 model = excluded.model,
                 official = excluded.official,
                 version = excluded.version,
-                version_raw = excluded.version_raw
+                version_raw = excluded.version_raw,
+                asn = IIF(excluded.asn = 0, asn, excluded.asn)
             "#,
             stat.device_id,
             stat.carrier,
@@ -156,6 +158,7 @@ impl Database {
             stat.official,
             stat.version,
             stat.version_raw,
+            stat.asn,
         )
         .execute(&self.pool)
         .await?;
