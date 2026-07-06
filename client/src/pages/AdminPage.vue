@@ -9,12 +9,14 @@ import {
   banModels,
   banVersions,
   getInstallations,
+  getTopAsns,
   listBans,
   reapBans,
   unbanModels,
   unbanVersions,
   type BannedItem,
   type InstallationFilters,
+  type TopAsnItem,
   type TotalInstallationsItem
 } from '@/api/admin'
 import { FILTER_COLUMNS } from '@/api/types'
@@ -126,7 +128,8 @@ const filters = ref<Required<InstallationFilters>>({
   model: '',
   country: '',
   version: '',
-  carrier: ''
+  carrier: '',
+  asn: ''
 })
 const installations = ref<TotalInstallationsItem[] | null>(null)
 const installationsBusy = ref(false)
@@ -151,7 +154,26 @@ async function queryInstallations() {
   }
 }
 
-onMounted(loadBans)
+const topAsns = ref<TopAsnItem[]>([])
+const asnsLoading = ref(false)
+const asnsError = ref<string | null>(null)
+
+async function loadTopAsns() {
+  asnsLoading.value = true
+  asnsError.value = null
+  try {
+    topAsns.value = await getTopAsns()
+  } catch (e) {
+    asnsError.value = (e as Error).message
+  } finally {
+    asnsLoading.value = false
+  }
+}
+
+onMounted(() => {
+  void loadBans()
+  void loadTopAsns()
+})
 </script>
 
 <template>
@@ -273,6 +295,7 @@ onMounted(loadBans)
           :label="key[0].toUpperCase() + key.slice(1)"
           @submit="queryInstallations"
         />
+        <TextField v-model="filters.asn" label="ASN" @submit="queryInstallations" />
       </div>
       <SubmitButton class="self-start" :disabled="installationsBusy" @click="queryInstallations">
         <LoaderCircle v-if="installationsBusy" class="size-4 animate-spin" />
@@ -290,17 +313,30 @@ onMounted(loadBans)
               <tr>
                 <th class="px-2 py-1 font-medium">Model</th>
                 <th class="px-2 py-1 font-medium">Version</th>
+                <th class="px-2 py-1 font-medium">ASN</th>
                 <th class="px-2 py-1 font-medium">Installations</th>
               </tr>
             </thead>
             <tbody>
               <tr
                 v-for="row in sortedInstallations"
-                :key="row.version_raw"
+                :key="`${row.version_raw}-${row.asn}`"
                 class="border-outline-variant border-t"
               >
                 <td class="text-on-surface px-2 py-1.5">{{ row.model }}</td>
                 <td class="text-on-surface px-2 py-1.5">{{ row.version_raw }}</td>
+                <td class="px-2 py-1.5">
+                  <a
+                    v-if="row.asn"
+                    :href="`https://bgp.tools/as/${row.asn}`"
+                    target="_blank"
+                    rel="noopener"
+                    class="text-brand-primary hover:underline"
+                  >
+                    AS{{ row.asn }}
+                  </a>
+                  <span v-else class="text-on-surface-muted">—</span>
+                </td>
                 <td class="text-on-surface-muted px-2 py-1.5 tabular-nums">
                   {{ formatNumber(row.installations) }}
                 </td>
@@ -309,6 +345,62 @@ onMounted(loadBans)
           </table>
         </div>
       </template>
+    </section>
+
+    <!-- Top ASNs -->
+    <section class="bg-surface-elevated flex flex-col gap-4 rounded-3xl p-5">
+      <header class="flex items-baseline justify-between gap-2">
+        <h2 class="text-on-surface text-lg font-medium">Top ASNs</h2>
+        <button
+          type="button"
+          class="border-outline-variant text-on-surface hover:border-brand-primary inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs transition disabled:opacity-50"
+          :disabled="asnsLoading"
+          @click="loadTopAsns"
+        >
+          <RefreshCw class="size-3.5" :class="asnsLoading && 'animate-spin'" />
+          Refresh
+        </button>
+      </header>
+
+      <p v-if="asnsError" class="text-sm text-red-400">{{ asnsError }}</p>
+      <p v-else-if="asnsLoading && !topAsns.length" class="text-on-surface-muted text-sm">
+        Loading…
+      </p>
+      <p v-else-if="!topAsns.length" class="text-on-surface-muted text-sm">No data.</p>
+      <div v-else class="overflow-x-auto">
+        <table class="w-full text-left text-sm">
+          <thead class="text-on-surface-muted text-xs">
+            <tr>
+              <th class="px-2 py-1 font-medium">ASN</th>
+              <th class="px-2 py-1 font-medium">Devices</th>
+              <th class="px-2 py-1 font-medium">Top Model</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="row in topAsns" :key="row.asn" class="border-outline-variant border-t">
+              <td class="px-2 py-1.5">
+                <a
+                  :href="`https://bgp.tools/as/${row.asn}`"
+                  target="_blank"
+                  rel="noopener"
+                  class="text-brand-primary hover:underline"
+                >
+                  AS{{ row.asn }}
+                </a>
+              </td>
+              <td class="text-on-surface-muted px-2 py-1.5 tabular-nums">
+                {{ formatNumber(row.devices) }}
+              </td>
+              <td class="text-on-surface px-2 py-1.5">
+                {{ row.top_model }}
+                <span class="text-on-surface-muted tabular-nums"
+                  >({{ formatNumber(row.top_model_count) }})</span
+                >
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
     </section>
 
     <SnackBar :message="snackbar" />

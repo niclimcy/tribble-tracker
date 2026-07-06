@@ -58,7 +58,16 @@ pub struct BannedItem {
 pub struct TotalInstallationsItem {
     pub model: String,
     pub version_raw: String,
+    pub asn: i64,
     pub installations: i64,
+}
+
+#[derive(Serialize)]
+pub struct TopAsnItem {
+    pub asn: i64,
+    pub devices: i64,
+    pub top_model: String,
+    pub top_model_count: i64,
 }
 
 pub struct NewStat<'a> {
@@ -79,6 +88,7 @@ pub enum GroupCol {
     Country,
     Version,
     Carrier,
+    Asn,
 }
 
 impl GroupCol {
@@ -89,6 +99,7 @@ impl GroupCol {
             Self::Country => "country",
             Self::Version => "version",
             Self::Carrier => "carrier",
+            Self::Asn => "asn",
         }
     }
 }
@@ -238,12 +249,12 @@ impl Database {
         filters: &[FilterClause<'_>],
     ) -> Result<Vec<TotalInstallationsItem>, DbError> {
         let mut qb = sqlx::QueryBuilder::new(
-            "SELECT model, version_raw, COUNT(*) AS installations FROM stats",
+            "SELECT model, version_raw, asn, COUNT(*) AS installations FROM stats",
         );
 
         Self::append_filters(&mut qb, filters);
 
-        qb.push(" GROUP BY version_raw ORDER BY installations DESC");
+        qb.push(" GROUP BY version_raw, asn ORDER BY installations DESC");
 
         let items = qb
             .build_query_as::<TotalInstallationsItem>()
@@ -273,6 +284,36 @@ impl Database {
                         (ban.model IS NOT NULL AND stat.model = ban.model)
                 ) AS affected_installations
             FROM banned ban;
+            "#
+        )
+        .fetch_all(&self.pool)
+        .await?;
+        Ok(items)
+    }
+
+    /// # Errors
+    ///
+    /// Returns a [`DbError`] if the query fails.
+    pub async fn fetch_top_asns(&self) -> Result<Vec<TopAsnItem>, DbError> {
+        // bare `model` picks the value from the MAX(devices) row (SQLite argmax)
+        let items = sqlx::query_as!(
+            TopAsnItem,
+            r#"
+            WITH by_model AS (
+                SELECT asn, model, COUNT(*) AS devices
+                FROM stats
+                WHERE asn != 0
+                GROUP BY asn, model
+            )
+            SELECT
+                asn AS "asn!: i64",
+                SUM(devices) AS "devices!: i64",
+                model AS "top_model!: String",
+                MAX(devices) AS "top_model_count!: i64"
+            FROM by_model
+            GROUP BY asn
+            ORDER BY SUM(devices) DESC
+            LIMIT 50
             "#
         )
         .fetch_all(&self.pool)
