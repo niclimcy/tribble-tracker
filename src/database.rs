@@ -287,14 +287,14 @@ impl Database {
         qb.push("version_raw IN (");
         {
             let mut separated = qb.separated(", ");
-            for version in bans.iter().flat_map(|b| b.version.as_ref()) {
+            for version in bans.iter().filter_map(|b| b.version.as_ref()) {
                 separated.push_bind(version);
             }
         }
         qb.push(") OR model IN (");
         {
             let mut separated = qb.separated(", ");
-            for model in bans.iter().flat_map(|b| b.model.as_ref()) {
+            for model in bans.iter().filter_map(|b| b.model.as_ref()) {
                 separated.push_bind(model);
             }
         }
