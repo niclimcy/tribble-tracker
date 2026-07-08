@@ -65,6 +65,7 @@ pub struct TotalInstallationsItem {
 #[derive(Serialize)]
 pub struct TopAsnItem {
     pub asn: i64,
+    pub asn_owner: String,
     pub devices: i64,
     pub top_model: String,
     pub top_model_count: i64,
@@ -307,6 +308,7 @@ impl Database {
             )
             SELECT
                 asn AS "asn!: i64",
+                "" AS "asn_owner!: String",
                 SUM(devices) AS "devices!: i64",
                 model AS "top_model!: String",
                 MAX(devices) AS "top_model_count!: i64"

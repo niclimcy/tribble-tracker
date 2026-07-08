@@ -113,7 +113,15 @@ async fn unban_version(
 async fn top_asns(
     State(state): State<AppState>,
 ) -> Result<Json<Vec<TopAsnItem>>, super::RouterError> {
-    let items = state.db.fetch_top_asns().await?;
+    let mut items = state.db.fetch_top_asns().await?;
+
+    for item in &mut items {
+        item.asn_owner = match crate::asn::lookup_asn_owner(&state.asn_db, item.asn as u32) {
+            Some(name) => name,
+            None => "Unknown".to_string(),
+        };
+    }
+
     Ok(Json(items))
 }
 

@@ -74,6 +74,18 @@ pub fn lookup(db: &AsnDb, ip: IpAddr) -> Option<i64> {
     (asn != 0).then_some(i64::from(asn))
 }
 
+/// Returns `None` when the database is not loaded (yet), the address has no
+/// match, or the match is unrouted (AS0).
+#[must_use]
+pub fn lookup_asn_owner(db: &AsnDb, asn: u32) -> Option<String> {
+    let guard = db.load();
+    match guard.as_ref()?.lookup_as_number(asn) {
+        Some(IpEntry::V4(e)) => Some(e.owner.to_string()),
+        Some(IpEntry::V6(e)) => Some(e.owner.to_string()),
+        None => None,
+    }
+}
+
 fn db_path() -> PathBuf {
     env::var("ASN_DB_PATH")
         .unwrap_or("ip2asn-combined.tsv.gz".to_string())

@@ -53,8 +53,7 @@ dependencies = [
 [[package]]
 name = "asn-db2"
 version = "0.2.2"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "06cdaeaa434cbef439220bb84896ce0fd36b4452f0325f0a8e5cd21a08d98901"
+source = "git+https://github.com/lineageos-infra/asn-db?rev=e9bb2c5ffe95950ff3dca01c213626267f182ea2#e9bb2c5ffe95950ff3dca01c213626267f182ea2"
 dependencies = [
  "csv",
  "ipnet",

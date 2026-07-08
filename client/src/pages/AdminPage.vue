@@ -385,7 +385,7 @@ onMounted(() => {
                   rel="noopener"
                   class="text-brand-primary hover:underline"
                 >
-                  AS{{ row.asn }}
+                  AS{{ row.asn }} ({{ row.asn_owner }})
                 </a>
               </td>
               <td class="text-on-surface-muted px-2 py-1.5 tabular-nums">

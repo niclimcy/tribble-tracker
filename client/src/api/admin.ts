@@ -18,6 +18,7 @@ export interface TotalInstallationsItem {
 
 export interface TopAsnItem {
   asn: number
+  asn_owner: string
   devices: number
   top_model: string
   top_model_count: number
